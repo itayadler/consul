@@ -23,11 +23,6 @@ App.Router.map(function() {
       // Show an individual service
       this.route("show", { path: "/*name" });
     });
-    // Nodes represent a consul node
-    this.resource("nodes", { path: "/nodes" }, function() {
-      // Show an individual node
-      this.route("show", { path: "/:name" });
-    });
     // Key/Value
     this.resource("kv", { path: "/kv" }, function(){
       this.route("index", { path: "/" });
@@ -36,14 +31,6 @@ App.Router.map(function() {
       // Edit a specific key
       this.route("edit", { path: "/*key/edit" });
     });
-    // ACLs
-    this.resource("acls", { path: "/acls" }, function(){
-      this.route("show", { path: "/:id" });
-    });
-
-    // Shows a page explaining that ACLs haven't been set-up
-    this.route("aclsdisabled", { path: "/aclsdisabled" });
-
     // Shows a page explaining that the ACL token being used isn't
     // authorized
     this.route("unauthorized", { path: "/unauthorized" });

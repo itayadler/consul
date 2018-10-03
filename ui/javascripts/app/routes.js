@@ -69,9 +69,7 @@ App.BaseRoute = Ember.Route.extend({
 App.IndexRoute = App.BaseRoute.extend({
   // Retrieve the list of datacenters
   model: function(params) {
-    return Ember.$.getJSON(consulHost + '/v1/catalog/datacenters').then(function(data) {
-      return data;
-    });
+    return Promise.resolve(['test']);
   },
 
   afterModel: function(model, transition) {
@@ -79,7 +77,7 @@ App.IndexRoute = App.BaseRoute.extend({
     // straight to it and bypass the global
     // view
     if (model.get('length') === 1) {
-      this.transitionTo('services', model[0]);
+      this.transitionTo('kv', model[0]);
     }
   }
 });
@@ -88,35 +86,15 @@ App.IndexRoute = App.BaseRoute.extend({
 // functioning, as well as the per-dc requests.
 App.DcRoute = App.BaseRoute.extend({
   model: function(params) {
-    var token = App.get('settings.token');
-
-    // Return a promise hash to retrieve the
-    // dcs and nodes used in the header
-    return Ember.RSVP.hash({
-      dc: params.dc,
-      dcs: Ember.$.getJSON(consulHost + '/v1/catalog/datacenters'),
-      nodes: Ember.$.getJSON(formatUrl(consulHost + '/v1/internal/ui/nodes', params.dc, token)).then(function(data) {
-        var objs = [];
-
-        // Merge the nodes into a list and create objects out of them
-        data.map(function(obj){
-          objs.push(App.Node.create(obj));
-        });
-
-        return objs;
-      }),
-      coordinates: Ember.$.getJSON(formatUrl(consulHost + '/v1/coordinate/nodes', params.dc, token)).then(function(data) {
-        return data;
-      })
-    });
+    return Promise.resolve(params);
   },
 
   setupController: function(controller, models) {
-    controller.set('content', models.dc);
-    controller.set('nodes', models.nodes);
-    controller.set('dcs', models.dcs);
-    controller.set('coordinates', models.coordinates);
-    controller.set('isDropdownVisible', false);
+    // controller.set('content', models.dc);
+    // controller.set('nodes', models.nodes);
+    // controller.set('dcs', models.dcs);
+    // controller.set('coordinates', models.coordinates);
+    // controller.set('isDropdownVisible', false);
   },
 });
 
@@ -214,17 +192,7 @@ App.KvEditRoute = App.BaseRoute.extend({
 
 App.ServicesRoute = App.BaseRoute.extend({
   model: function(params) {
-    var dc = this.modelFor('dc').dc;
-    var token = App.get('settings.token');
-
-    // Return a promise to retrieve all of the services
-    return Ember.$.getJSON(formatUrl(consulHost + '/v1/internal/ui/services', dc, token)).then(function(data) {
-      var objs = [];
-      data.map(function(obj){
-       objs.push(App.Service.create(obj));
-      });
-      return objs;
-    });
+    return Promise.resolve([]);
   },
   setupController: function(controller, model) {
     controller.set('services', model);
